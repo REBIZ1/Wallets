@@ -3,9 +3,13 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 
+from src.api.wallets import router as wallet_router
+
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(docs_url=None)
+
+app.include_router(wallet_router)
 
 
 @app.get("/docs", include_in_schema=False)
