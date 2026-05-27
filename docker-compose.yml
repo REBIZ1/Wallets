@@ -1,0 +1,32 @@
+services:
+  wallets_db:
+    container_name: wallets_db
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wallets
+    ports:
+      - "6432:5432"
+    volumes:
+      - pg-wallets-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wallets"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  wallets_back:
+    container_name: wallets_back
+    build:
+      context: .
+    ports:
+      - "7777:8000"
+    env_file:
+      - .env
+    depends_on:
+      wallets_db:
+        condition: service_healthy
+
+volumes:
+  pg-wallets-data:
